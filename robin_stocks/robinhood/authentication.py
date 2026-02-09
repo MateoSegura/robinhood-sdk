@@ -132,14 +132,14 @@ def login(username=None, password=None, expiresIn=86400, scope='internal', store
         data_dir = pickle_path
 
     if not os.path.exists(data_dir):
-        os.makedirs(data_dir)
+        os.makedirs(data_dir, mode=0o700)
 
     creds_file = "robinhood" + pickle_name + ".pickle"
     pickle_path = os.path.join(data_dir, creds_file)
 
     url = login_url()
     login_payload = {
-        'client_id': 'c82SH0WZOsabOXGP2sxqcj34FxkvfnWRZBKlBjFS',
+        'client_id': os.environ.get('ROBINHOOD_CLIENT_ID', 'c82SH0WZOsabOXGP2sxqcj34FxkvfnWRZBKlBjFS'),
         'expires_in': expiresIn,
         'grant_type': 'password',
         'password': password,

@@ -87,8 +87,7 @@ def export_completed_stock_orders(dir_path, file_name=None, account_number=None)
                     order['quantity'],
                     order['average_price']
                 ])
-        f.close()
-    
+
 @login_required
 def export_completed_crypto_orders(dir_path, file_name=None):
     """Write all completed crypto orders to a csv file
@@ -128,7 +127,6 @@ def export_completed_crypto_orders(dir_path, file_name=None):
                     order['quantity'],
                     order['average_price']
                 ])
-        f.close()
 
 
 @login_required
@@ -179,4 +177,3 @@ def export_completed_option_orders(dir_path, file_name=None):
                         order['price'],
                         order['processed_quantity']
                     ])
-        f.close()

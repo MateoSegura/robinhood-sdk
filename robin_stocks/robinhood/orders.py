@@ -729,7 +729,7 @@ def order_trailing_stop(symbol, quantity, side, trailAmount, trailType='percenta
         symbol = symbol.upper().strip()
         trailAmount = float(trailAmount)
     except AttributeError as message:
-        print(message)
+        print(message, file=get_output())
         return None
 
     stock_price = round_price(get_latest_price(symbol, extendedHours)[0])
@@ -742,8 +742,8 @@ def order_trailing_stop(symbol, quantity, side, trailAmount, trailType='percenta
         else:
             margin = stock_price * trailAmount * 0.01
             percentage = trailAmount
-    except Exception as e:
-        print('ERROR: {}'.format(e))
+    except (TypeError, ValueError, ZeroDivisionError) as e:
+        print(f'ERROR: {e}', file=get_output())
         return None
 
     stopPrice = stock_price + margin if side == "buy" else stock_price - margin

@@ -175,23 +175,23 @@ def filter_data(data, info):
     :returns:  A list or string with the values that correspond to the info keyword.
 
     """
-    if (data == None):
+    if data is None:
         return(data)
     elif (data == [None]):
         return([])
-    elif (type(data) == list):
+    elif isinstance(data, list):
         if (len(data) == 0):
             return([])
         compareDict = data[0]
         noneType = []
-    elif (type(data) == dict):
+    elif isinstance(data, dict):
         compareDict = data
         noneType = None
 
     if info is not None:
-        if info in compareDict and type(data) == list:
+        if info in compareDict and isinstance(data, list):
             return([x[info] for x in data])
-        elif info in compareDict and type(data) == dict:
+        elif info in compareDict and isinstance(data, dict):
             return(data[info])
         else:
             print(error_argument_not_key_in_dictionary(info), file=get_output())
@@ -220,10 +220,10 @@ def inputs_to_set(inputSymbols):
             symbols_set.add(symbol)
             symbols_list.append(symbol)
 
-    if type(inputSymbols) is str:
+    if isinstance(inputSymbols, str):
         add_symbol(inputSymbols)
-    elif type(inputSymbols) is list or type(inputSymbols) is tuple or type(inputSymbols) is set:
-        inputSymbols = [comp for comp in inputSymbols if type(comp) is str]
+    elif isinstance(inputSymbols, (list, tuple, set)):
+        inputSymbols = [comp for comp in inputSymbols if isinstance(comp, str)]
         for item in inputSymbols:
             add_symbol(item)
 
@@ -239,7 +239,7 @@ def request_document(url, payload=None):
 
     """ 
     try:
-        res = SESSION.get(url, params=payload)
+        res = SESSION.get(url, params=payload, timeout=16)
         res.raise_for_status()
     except requests.exceptions.HTTPError as message:
         print(message, file=get_output())
@@ -272,14 +272,14 @@ def request_get(url, dataType='regular', payload=None, jsonify_data=True):
     res = None
     if jsonify_data:
         try:
-            res = SESSION.get(url, params=payload)
+            res = SESSION.get(url, params=payload, timeout=16)
             res.raise_for_status()
             data = res.json()
         except (requests.exceptions.HTTPError, AttributeError) as message:
             print(message, file=get_output())
             return(data)
     else:
-        res = SESSION.get(url, params=payload)
+        res = SESSION.get(url, params=payload, timeout=16)
         return(res)
     # Only continue to filter data if jsonify_data=True, and Session.get returned status code <200>.
     if (dataType == 'results'):
@@ -301,11 +301,11 @@ def request_get(url, dataType='regular', payload=None, jsonify_data=True):
             print('Found Additional pages.', file=get_output())
         while nextData['next']:
             try:
-                res = SESSION.get(nextData['next'])
+                res = SESSION.get(nextData['next'], timeout=16)
                 res.raise_for_status()
                 nextData = res.json()
-            except:
-                print('Additional pages exist but could not be loaded.', file=get_output())
+            except (requests.exceptions.RequestException, KeyError, ValueError) as e:
+                print(f'Additional pages exist but could not be loaded: {e}', file=get_output())
                 return(data)
             print('Loading page '+str(counter)+' ...', file=get_output())
             counter += 1

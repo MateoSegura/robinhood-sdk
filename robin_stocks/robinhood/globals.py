@@ -15,7 +15,7 @@ SESSION.headers = {
     "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
     "X-Robinhood-API-Version": "1.431.4",
     "Connection": "keep-alive",
-    "User-Agent": "*"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
 }
 
 #All print() statement direct their output to this stream

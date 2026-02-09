@@ -225,8 +225,8 @@ def get_dividends_by_instrument(instrument, dividend_data):
             'total_dividend': "{0:.2f}".format(total_dividends),
             'amount_paid_to_date': "{0:.2f}".format(total_amount_paid)
         }
-    except:
-        pass
+    except (IndexError, KeyError, TypeError, ValueError):
+        return None
 
 
 @login_required
@@ -288,7 +288,7 @@ def get_margin_calls(symbol=None):
         except AttributeError as message:
             print(message, file=get_output())
             return None
-        payload = {'equity_instrument_id', id_for_stock(symbol)}
+        payload = {'equity_instrument_id': id_for_stock(symbol)}
         data = request_get(url, 'results', payload)
     else:
         data = request_get(url, 'results')
@@ -433,8 +433,8 @@ def get_card_transactions(cardType=None, info=None):
 
     """
     payload = None
-    if type:
-        payload = { 'type': type }
+    if cardType:
+        payload = { 'type': cardType }
 
     url = cardtransactions_url()
     data = request_get(url, 'pagination', payload)
@@ -602,7 +602,7 @@ def download_all_documents(doctype=None, dirpath=None):
 
     counter = 0
     for item in documents:
-        if doctype == None:
+        if doctype is None:
             data = request_document(item['download_url'])
             if data:
                 name = item['created_at'][0:10] + '-' + \
@@ -626,7 +626,7 @@ def download_all_documents(doctype=None, dirpath=None):
                     counter += 1
                     print('Writing PDF {}...'.format(counter), file=get_output())
 
-    if downloaded_files == False:
+    if not downloaded_files:
         print('WARNING: Could not find files of that doctype to download', file=get_output())
     else:
         if counter == 1:
@@ -831,7 +831,7 @@ def build_holdings(with_dividends=False):
                 holdings[symbol].update(get_dividends_by_instrument(
                     item['instrument'], dividend_data))
 
-        except:
+        except (IndexError, KeyError, TypeError, ValueError):
             pass
 
     return(holdings)

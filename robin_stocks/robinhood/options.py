@@ -330,7 +330,7 @@ def find_options_by_specific_profitability(inputSymbols, expirationDate=None, st
                     floatValue = float(option[typeProfit])
                     if (floatValue >= profitFloor and floatValue <= profitCeiling):
                         data.append(option)
-                except:
+                except (TypeError, ValueError, KeyError):
                     pass
 
     return(filter_data(data, info))

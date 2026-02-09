@@ -4,7 +4,7 @@ from datetime import datetime
 from hashlib import sha384
 from hmac import new
 from json import dumps
-from random import random
+import secrets as _secrets
 from time import mktime
 
 from robin_stocks.gemini.helper import (format_inputs, get_secret_key, get_nonce,
@@ -54,24 +54,16 @@ def generate_order_id():
     :returns: A string representing the token.
 
     """
-    rands = []
-    for i in range(0, 16):
-        r = random()
-        rand = 4294967296.0 * r
-        rands.append((int(rand) >> ((3 & i) << 3)) & 255)
-
-    hexa = []
-    for i in range(0, 256):
-        hexa.append(str(hex(i+256)).lstrip("0x").rstrip("L")[1:])
+    rands = [_secrets.randbelow(256) for _ in range(16)]
+    hexa = [f'{i:02x}' for i in range(256)]
 
     id = ""
-    for i in range(0, 16):
+    for i in range(16):
         id += hexa[rands[i]]
-
-        if (i == 3) or (i == 5) or (i == 7) or (i == 9):
+        if i in (3, 5, 7, 9):
             id += "-"
 
-    return(id)
+    return id
 
 
 @login_required
